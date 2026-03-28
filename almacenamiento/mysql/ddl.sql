@@ -17,14 +17,23 @@ CREATE TABLE IF NOT EXISTS especialidades (
     nombre_espec VARCHAR(300) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS empleados (
+    id_empleado INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    tipo_empleado_fk INT,
+    fecha_contratacion DATE NOT NULL,
+    FOREIGN KEY(tipo_empleado_fk) REFERENCES tipo_empleado(id_tipo_empleado)
+);
+
 CREATE TABLE IF NOT EXISTS medicos (
     id_medico INT AUTO_INCREMENT PRIMARY KEY,
+    id_empleado_fk INT NOT NULL UNIQUE,
     documento VARCHAR(20) NOT NULL UNIQUE,
     tipo_medico_fk INT,
-    tipo_empleado_fk INT,
     especialidad_fk INT,
+    FOREIGN KEY(id_empleado_fk) REFERENCES empleados(id_empleado),
     FOREIGN KEY(tipo_medico_fk) REFERENCES tipo_medico(id_tipo_medico),
-    FOREIGN KEY(tipo_empleado_fk) REFERENCES tipo_empleado(id_tipo_empleado),
     FOREIGN KEY(especialidad_fk) REFERENCES especialidades(id_espec)
 );
 
@@ -62,16 +71,7 @@ CREATE TABLE IF NOT EXISTS sustituto (
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE NOT NULL,
     estado_sust ENUM('activa', 'finalizada') NOT NULL,
-    FOREIGN KEY (id_medico_sust) REFERENCES tipo_medico(id_tipo_medico)
-);
-
-CREATE TABLE IF NOT EXISTS empleados (
-    id_empleado INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
-    tipo_empleado_fk INT,
-    fecha_contratacion DATE NOT NULL,
-    FOREIGN KEY(tipo_empleado_fk) REFERENCES tipo_empleado(id_tipo_empleado)
+    FOREIGN KEY (id_medico_sust) REFERENCES medicos(id_medico)
 );
 
 CREATE TABLE IF NOT EXISTS vacaciones (
@@ -83,5 +83,3 @@ CREATE TABLE IF NOT EXISTS vacaciones (
     estado ENUM('planificadas', 'disfrutadas'),
     FOREIGN KEY(id_empleado_fk) REFERENCES empleados(id_empleado)
 );
-
-
